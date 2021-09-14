@@ -10,7 +10,7 @@ MIT协议，欢迎大家使用并提出意见
 
 [gitee(码云) - https://gitee.com/sardkit/saribbon-pyqt5](https://gitee.com/sardkit/saribbon-pyqt5)
 
- 它理论支持4种目前常见的ribbon样式在线切换（目前只测试了3行office模式，其余未进行测试）
+ 它支持4种目前常见的ribbon样式在线切换（目前简单测试通过，未进行深度测试）
 
  包括2种office模式，office模式是最常见的ribbon模式了，就是我们经常看到的word模式，office模式的tab和标题栏占用位置较多。
 
@@ -24,15 +24,15 @@ MIT协议，欢迎大家使用并提出意见
 
 # 使用方法
 
-可以把整个目录移动到需要的工程目录下，然后在项目的文件中`import PySARibbonBar`或`from PySARibbonBar import *`即可，
-引用实用类示例如下：
+可以把PySARibbon目录包移动到需要的工程目录下，然后在项目的文件中`import PySARibbonBar`或`from PySARibbonBar import *`即可，
+或者引用具体实用类示例如下：
 
 ```Python
 from PySARibbonBar import SARibbonMainWindow
 ```
 
 
-# 更多截图(copy自原Qt项目，有些暂未实现)
+# 更多截图(copy自原Qt项目，定制化功能暂未实现)
 
 ![](https://cdn.jsdelivr.net/gh/czyt1988/SARibbon/doc/screenshot/SARibbonBar-screenshot-01.gif)
 
@@ -51,9 +51,9 @@ from PySARibbonBar import SARibbonMainWindow
 
 # 题外
 
-大部分代码是根据C++进行移植的，也有少部分对代码结构进行了更改；
+大部分代码是根据原C++代码结构进行移植的，也有部分是基于Python语法特性对原代码结构进行了调整和更改；
 
-更多相关功能可看Qt原作者相关其他项目，欢迎有兴趣的朋友一起完善本项目
+更多相关功能可看Qt原作者相关其他项目，欢迎有兴趣的朋友一起完善本并丰富本项目
 
 # 计划及进度
 
@@ -71,4 +71,4 @@ from PySARibbonBar import SARibbonMainWindow
 
 # 其他
 
-> 无
+> 此处向原作者[尘中远](https://gitee.com/czyt1988)致敬
