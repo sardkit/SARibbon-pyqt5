@@ -9,7 +9,8 @@
 MIT协议，欢迎大家使用并提出意见
 
 [gitee(码云) - https://gitee.com/sardkit/saribbon-pyqt5](https://gitee.com/sardkit/saribbon-pyqt5)
-[github - https://github.com/sardkit/SARibbon-pyqt5](https://github.com/sardkit/SARibbon-pyqt5)
+
+[github(hub) - https://github.com/sardkit/SARibbon-pyqt5](https://github.com/sardkit/SARibbon-pyqt5)
 
  它支持4种目前常见的ribbon样式在线切换（目前简单测试通过，未进行深度测试）
 
