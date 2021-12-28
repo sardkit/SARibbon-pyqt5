@@ -9,6 +9,7 @@
 MIT协议，欢迎大家使用并提出意见
 
 [gitee(码云) - https://gitee.com/sardkit/saribbon-pyqt5](https://gitee.com/sardkit/saribbon-pyqt5)
+[github - https://github.com/sardkit/SARibbon-pyqt5](https://github.com/sardkit/SARibbon-pyqt5)
 
  它支持4种目前常见的ribbon样式在线切换（目前简单测试通过，未进行深度测试）
 
@@ -53,7 +54,7 @@ from PySARibbonBar import SARibbonMainWindow
 
 大部分代码是根据原C++代码结构进行移植的，也有部分是基于Python语法特性对原代码结构进行了调整和更改；
 
-更多相关功能可看Qt原作者相关其他项目，欢迎有兴趣的朋友一起完善本并丰富本项目
+更多相关功能可看Qt原作者相关项目，欢迎有兴趣的朋友一起完善本并丰富本项目。
 
 # 计划及进度
 
