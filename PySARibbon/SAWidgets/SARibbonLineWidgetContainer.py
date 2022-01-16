@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@Module     SARibbonControlButton
+@Module     SARibbonLineWidgetContainer
 @Author     ROOT
 
 @brief 一个窗口容器，把窗口放置中间，前面后面都可以设置文本，主要用于放置在pannel上的小窗口
