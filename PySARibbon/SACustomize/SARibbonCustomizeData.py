@@ -192,40 +192,40 @@ class SARibbonCustomizeData(object):
         """设置ActionsManager"""
         self.m_actionsManagerPointer = mgr
 
-    @staticmethod
-    def makeAddCategoryCustomizeData(title: str, index: int, objName: str) -> object:
+    @classmethod
+    def makeAddCategoryCustomizeData(cls, title: str, index: int, objName: str) -> object:
         """创建一个AddCategoryActionType的SARibbonCustomizeData"""
-        d = SARibbonCustomizeData(SARibbonCustomizeData.AddCategoryActionType)
+        d = SARibbonCustomizeData(cls.AddCategoryActionType)
         d.indexValue = index
         d.keyValue = title
         d.categoryObjNameValue = objName
         return d
 
-    @staticmethod
-    def makeAddPannelCustomizeData(title: str, index: int, categoryobjName: str, objName: str) -> object:
+    @classmethod
+    def makeAddPannelCustomizeData(cls, title: str, index: int, categoryobjName: str, objName: str) -> object:
         """创建一个AddPannelActionType的SARibbonCustomizeData"""
-        d = SARibbonCustomizeData(SARibbonCustomizeData.AddPannelActionType)
+        d = SARibbonCustomizeData(cls.AddPannelActionType)
         d.indexValue = index
         d.keyValue = title
         d.pannelObjNameValue = objName
         d.categoryObjNameValue = categoryobjName
         return d
 
-    @staticmethod
-    def makeAddActionCustomizeData(key: str,  mgr: QWidget, rp: int,
+    @classmethod
+    def makeAddActionCustomizeData(cls, key: str,  mgr: QWidget, rp: int,
                                    categoryobjName: str, pannelObjName: str) -> object:
         """添加action"""
-        d = SARibbonCustomizeData(SARibbonCustomizeData.AddActionActionType, mgr)
+        d = SARibbonCustomizeData(cls.AddActionActionType, mgr)
         d.keyValue = key
         d.pannelObjNameValue = pannelObjName
         d.categoryObjNameValue = categoryobjName
         d.actionRowProportionValue = rp
         return d
 
-    @staticmethod
-    def makeRenameCategoryCustomizeData(newname: str, categoryobjName: str) -> object:
+    @classmethod
+    def makeRenameCategoryCustomizeData(cls, newname: str, categoryobjName: str) -> object:
         """创建一个RenameCategoryActionType的SARibbonCustomizeData"""
-        d = SARibbonCustomizeData(SARibbonCustomizeData.RenameCategoryActionType)
+        d = SARibbonCustomizeData(cls.RenameCategoryActionType)
         if not categoryobjName:
             print("SARibbon Warning !!! customize rename category, but get an empty category object name,"
                   "if you want to customize SARibbon, please make sure every element has been set object name.")
@@ -233,10 +233,10 @@ class SARibbonCustomizeData(object):
         d.categoryObjNameValue = categoryobjName
         return d
 
-    @staticmethod
-    def makeRenamePannelCustomizeData(newname: str, categoryobjName: str, pannelObjName: str) -> object:
+    @classmethod
+    def makeRenamePannelCustomizeData(cls, newname: str, categoryobjName: str, pannelObjName: str) -> object:
         """创建一个RenamePannelActionType的SARibbonCustomizeData"""
-        d = SARibbonCustomizeData(SARibbonCustomizeData.RenamePannelActionType)
+        d = SARibbonCustomizeData(cls.RenamePannelActionType)
         if not categoryobjName or not pannelObjName:
             print("SARibbon Warning !!! customize rename category, but get an empty category object name,"
                   "if you want to customize SARibbon, please make sure every element has been set object name.")
@@ -245,10 +245,10 @@ class SARibbonCustomizeData(object):
         d.pannelObjNameValue = pannelObjName
         return d
 
-    @staticmethod
-    def makeChangeCategoryOrderCustomizeData(categoryobjName: str, moveIndex: int) -> object:
+    @classmethod
+    def makeChangeCategoryOrderCustomizeData(cls, categoryobjName: str, moveIndex: int) -> object:
         """对应ChangeCategoryOrderActionType"""
-        d = SARibbonCustomizeData(SARibbonCustomizeData.ChangeCategoryOrderActionType)
+        d = SARibbonCustomizeData(cls.ChangeCategoryOrderActionType)
         if not categoryobjName:
             print("SARibbon Warning !!! customize rename category, but get an empty category object name,"
                   "if you want to customize SARibbon, please make sure every element has been set object name.")
@@ -256,10 +256,10 @@ class SARibbonCustomizeData(object):
         d.indexValue = moveIndex
         return d
 
-    @staticmethod
-    def makeChangePannelOrderCustomizeData(categoryobjName: str, pannelObjName: str, moveIndex: int) -> object:
+    @classmethod
+    def makeChangePannelOrderCustomizeData(cls, categoryobjName: str, pannelObjName: str, moveIndex: int) -> object:
         """对应ChangePannelOrderActionType"""
-        d = SARibbonCustomizeData(SARibbonCustomizeData.ChangePannelOrderActionType)
+        d = SARibbonCustomizeData(cls.ChangePannelOrderActionType)
         if not categoryobjName or not pannelObjName:
             print("SARibbon Warning !!! customize rename category, but get an empty category object name,"
                   "if you want to customize SARibbon, please make sure every element has been set object name.")
@@ -268,11 +268,11 @@ class SARibbonCustomizeData(object):
         d.indexValue = moveIndex
         return d
 
-    @staticmethod
-    def makeChangeActionOrderCustomizeData(categoryobjName: str, pannelObjName: str,
+    @classmethod
+    def makeChangeActionOrderCustomizeData(cls, categoryobjName: str, pannelObjName: str,
                                            key: str, mgr: QWidget, moveIndex: int) -> object:
         """对应ChangeActionOrderActionType"""
-        d = SARibbonCustomizeData(SARibbonCustomizeData.ChangeActionOrderActionType, mgr)
+        d = SARibbonCustomizeData(cls.ChangeActionOrderActionType, mgr)
         if not categoryobjName or not pannelObjName:
             print("SARibbon Warning !!! customize rename category, but get an empty category object name,"
                   "if you want to customize SARibbon, please make sure every element has been set object name.")
@@ -282,20 +282,20 @@ class SARibbonCustomizeData(object):
         d.indexValue = moveIndex
         return d
 
-    @staticmethod
-    def makeRemoveCategoryCustomizeData(categoryobjName: str) -> object:
+    @classmethod
+    def makeRemoveCategoryCustomizeData(cls, categoryobjName: str) -> object:
         """对应RemoveCategoryActionType"""
-        d = SARibbonCustomizeData(SARibbonCustomizeData.RemoveCategoryActionType)
+        d = SARibbonCustomizeData(cls.RemoveCategoryActionType)
         if not categoryobjName:
             print("SARibbon Warning !!! customize rename category, but get an empty category object name,"
                   "if you want to customize SARibbon, please make sure every element has been set object name.")
         d.categoryObjNameValue = categoryobjName
         return d
 
-    @staticmethod
-    def makeRemovePannelCustomizeData(categoryobjName: str, pannelObjName: str) -> object:
+    @classmethod
+    def makeRemovePannelCustomizeData(cls, categoryobjName: str, pannelObjName: str) -> object:
         """对应RemovePannelActionType"""
-        d = SARibbonCustomizeData(SARibbonCustomizeData.RemovePannelActionType)
+        d = SARibbonCustomizeData(cls.RemovePannelActionType)
         if not categoryobjName or not pannelObjName:
             print("SARibbon Warning !!! customize rename category, but get an empty category object name,"
                   "if you want to customize SARibbon, please make sure every element has been set object name.")
@@ -303,10 +303,10 @@ class SARibbonCustomizeData(object):
         d.pannelObjNameValue = pannelObjName
         return d
 
-    @staticmethod
-    def makeRemoveActionCustomizeData(categoryobjName: str, pannelObjName: str, key: str, mgr: QWidget) -> object:
+    @classmethod
+    def makeRemoveActionCustomizeData(cls, categoryobjName: str, pannelObjName: str, key: str, mgr: QWidget) -> object:
         """对应RemoveActionActionType"""
-        d = SARibbonCustomizeData(SARibbonCustomizeData.RemoveActionActionType, mgr)
+        d = SARibbonCustomizeData(cls.RemoveActionActionType, mgr)
         if not categoryobjName or not pannelObjName:
             print("SARibbon Warning !!! customize rename category, but get an empty category object name,"
                   "if you want to customize SARibbon, please make sure every element has been set object name.")
@@ -315,10 +315,10 @@ class SARibbonCustomizeData(object):
         d.keyValue = key
         return d
 
-    @staticmethod
-    def makeVisibleCategoryCustomizeData(categoryobjName: str, isShow: bool) -> object:
+    @classmethod
+    def makeVisibleCategoryCustomizeData(cls, categoryobjName: str, isShow: bool) -> object:
         """对应VisibleCategoryActionType"""
-        d = SARibbonCustomizeData(SARibbonCustomizeData.VisibleCategoryActionType)
+        d = SARibbonCustomizeData(cls.VisibleCategoryActionType)
         if not categoryobjName:
             print("SARibbon Warning !!! customize rename category, but get an empty category object name,"
                   "if you want to customize SARibbon, please make sure every element has been set object name.")
@@ -337,8 +337,8 @@ class SARibbonCustomizeData(object):
         """设置外置属性允许自定义"""
         obj.setProperty(SA_RIBBON_BAR_PROP_CAN_CUSTOMIZE, canbe)
 
-    @staticmethod
-    def simplify(csd: List) -> List:
+    @classmethod
+    def simplify(cls, csd: List) -> List:
         """对List[SARibbonCustomizeData]进行简化操作
          *此函数会执行如下操作：
          1、针对同一个category/pannel连续出现的添加和删除操作进行移除（前一步添加，后一步删除）
@@ -354,90 +354,90 @@ class SARibbonCustomizeData(object):
         willremoveIndex = list()    # 记录要删除的index
         # 首先针对连续出现的添加和删除操作进行优化
         for i in range(size):
-            if (csd[i-1].actionType() == SARibbonCustomizeData.AddCategoryActionType and
-                csd[i].actionType() == SARibbonCustomizeData.RemoveCategoryActionType):
+            if (csd[i-1].actionType() == cls.AddCategoryActionType and
+                csd[i].actionType() == cls.RemoveCategoryActionType):
                 if csd[i-1].categoryObjNameValue == csd[i].categoryObjNameValue:
                     willremoveIndex.append(i-1)
                     willremoveIndex.append(i)
-            elif (csd[i-1].actionType() == SARibbonCustomizeData.AddPannelActionType and
-                   csd[i].actionType() == SARibbonCustomizeData.RemovePannelActionType):
+            elif (csd[i-1].actionType() == cls.AddPannelActionType and
+                   csd[i].actionType() == cls.RemovePannelActionType):
                 if (csd[i-1].categoryObjNameValue == csd[i].categoryObjNameValue and
                      csd[i-1].pannelObjNameValue == csd[i].pannelObjNameValue):
                     willremoveIndex.append(i-1)
                     willremoveIndex.append(i)
-            elif (csd[i-1].actionType() == SARibbonCustomizeData.AddActionActionType and
-                   csd[i].actionType() == SARibbonCustomizeData.RemoveActionActionType):
+            elif (csd[i-1].actionType() == cls.AddActionActionType and
+                   csd[i].actionType() == cls.RemoveActionActionType):
                 if (csd[i-1].categoryObjNameValue == csd[i].categoryObjNameValue and
                      csd[i-1].pannelObjNameValue == csd[i].pannelObjNameValue and
                      csd[i-1].keyValue == csd[i].keyValue):
                     willremoveIndex.append(i-1)
                     willremoveIndex.append(i)
-        res = SARibbonCustomizeData.remove_indexs(csd, willremoveIndex)
+        res = cls.remove_indexs(csd, willremoveIndex)
         willremoveIndex.clear()
 
         # 筛选VisibleCategoryActionType，对于连续出现的操作只保留最后一步
         size = len(res)
         for i in range(size):
-            if (res[i-1].actionType() == SARibbonCustomizeData.VisibleCategoryActionType and
-                 res[i].actionType() == SARibbonCustomizeData.VisibleCategoryActionType):
+            if (res[i-1].actionType() == cls.VisibleCategoryActionType and
+                 res[i].actionType() == cls.VisibleCategoryActionType):
                 # 要保证操作的是同一个内容
                 if res[i-1].categoryObjNameValue == res[i].categoryObjNameValue:
                     willremoveIndex.append(i-1)     # 删除前一个只保留最后一个
-        res = SARibbonCustomizeData.remove_indexs(res, willremoveIndex)
+        res = cls.remove_indexs(res, willremoveIndex)
         willremoveIndex.clear()
 
         # 针对RenameCategoryActionType和RenamePannelActionType操作，只需保留最后一个
         for i, val in enumerate(res):
-            if val.actionType() == SARibbonCustomizeData.RenameCategoryActionType:
+            if val.actionType() == cls.RenameCategoryActionType:
                 # 向后查询，如果查询到有同一个Category改名，把这个索引加入删除队列
                 for v in res[i+1:]:
                     if (v.actionType() == val.actionType() and
                          v.categoryObjNameValue == val.categoryObjNameValue):
                         willremoveIndex.append(i)
-            elif val.actionType() == SARibbonCustomizeData.RenamePannelActionType:
+            elif val.actionType() == cls.RenamePannelActionType:
                 # 向后查询，如果查询到有同一个pannel改名，把这个索引加入删除队列
                 for v in res[i+1:]:
                     if (v.actionType() == val.actionType() and
                          v.categoryObjNameValue == val.categoryObjNameValue and
                          v.pannelObjNameValue == val.pannelObjNameValue):
                         willremoveIndex.append(i)
-        res = SARibbonCustomizeData.remove_indexs(res, willremoveIndex)
+        res = cls.remove_indexs(res, willremoveIndex)
         willremoveIndex.clear()
 
         # 针对连续的ChangeCategoryOrderActionType，ChangePannelOrderActionType，ChangeActionOrderActionType进行合并
         size = res.size()
         for i in range(size):
-            if (res[i-1].actionType() == SARibbonCustomizeData.ChangeCategoryOrderActionType and
-                        res[i].actionType() == SARibbonCustomizeData.ChangeCategoryOrderActionType):
+            if (res[i-1].actionType() == cls.ChangeCategoryOrderActionType and
+                        res[i].actionType() == cls.ChangeCategoryOrderActionType):
                 if res[i-1].categoryObjNameValue == res[i].categoryObjNameValue:
                     # 说明连续两个顺序调整，把前一个indexvalue和后一个indexvalue相加，前一个删除
                     res[i].indexValue += res[i-1].indexValue
                     willremoveIndex.append(i-1)
-            elif (res[i-1].actionType() == SARibbonCustomizeData.ChangePannelOrderActionType and
-                   res[i].actionType() == SARibbonCustomizeData.ChangePannelOrderActionType):
+            elif (res[i-1].actionType() == cls.ChangePannelOrderActionType and
+                   res[i].actionType() == cls.ChangePannelOrderActionType):
                 if (res[i-1].categoryObjNameValue == res[i].categoryObjNameValue and
                      res[i-1].pannelObjNameValue == res[i].pannelObjNameValue):
                     # 说明连续两个顺序调整，把前一个indexvalue和后一个indexvalue相加，前一个删除
                     res[i].indexValue += res[i - 1].indexValue
                     willremoveIndex.append(i-1)
-            elif (res[i-1].actionType() == SARibbonCustomizeData.ChangeActionOrderActionType and
-                   res[i].actionType() == SARibbonCustomizeData.ChangeActionOrderActionType):
+            elif (res[i-1].actionType() == cls.ChangeActionOrderActionType and
+                   res[i].actionType() == cls.ChangeActionOrderActionType):
                 if (res[i-1].categoryObjNameValue == res[i].categoryObjNameValue and
                      res[i-1].pannelObjNameValue == res[i].pannelObjNameValue and
                      res[i-1].keyValue == res[i].keyValue):
                     res[i].indexValue += res[i - 1].indexValue
                     willremoveIndex.append(i-1)
-        res = SARibbonCustomizeData.remove_indexs(res, willremoveIndex)
+        res = cls.remove_indexs(res, willremoveIndex)
         willremoveIndex.clear()
 
         # 上一步操作可能会产生indexvalue为0的情况，此操作把indexvalue为0的删除
         for i, val in enumerate(res):
-            if (val.actionType() == SARibbonCustomizeData.ChangeCategoryOrderActionType and
-                        val.actionType() == SARibbonCustomizeData.ChangeCategoryOrderActionType or
-                        val.actionType() == SARibbonCustomizeData.ChangeCategoryOrderActionType):
+            if (val.actionType() == cls.ChangeCategoryOrderActionType and
+                        val.actionType() == cls.ChangeCategoryOrderActionType or
+                        val.actionType() == cls.ChangeCategoryOrderActionType):
                 if val.indexValue == 0:
                     willremoveIndex.append(i)
-        res = SARibbonCustomizeData.remove_indexs(res, willremoveIndex)
+        res = cls.remove_indexs(res, willremoveIndex)
         return res
 
     @staticmethod
