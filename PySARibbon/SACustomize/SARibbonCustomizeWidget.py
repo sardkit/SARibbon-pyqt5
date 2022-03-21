@@ -11,7 +11,7 @@
 from typing import List
 
 from PyQt5.QtCore import Qt, QXmlStreamReader, QModelIndex, QDateTime, QXmlStreamWriter, QXmlStreamAttributes, \
-    QIODevice, QFile
+    QIODevice, QFile, QItemSelectionModel
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import QWidget, QAction, QHBoxLayout, QVBoxLayout, QLabel, QComboBox, QLineEdit, QListView, \
     QSpacerItem, QPushButton, QRadioButton, QButtonGroup, QTreeView, QToolButton, QSizePolicy, QAbstractItemView, \
@@ -152,42 +152,84 @@ class SARibbonCustomizeWidget(QWidget):
         self.m_d.mCustomizeDatas.clear()
 
     def simplify(self):
-        # TODO 待完成
-        pass
+        """精简"""
+        self.m_d.mCustomizeDatas = SARibbonCustomizeData.simplify(self.m_d.mCustomizeDatas)
 
     def selectedRowProportion(self) -> int:
-        pass
+        """获取当前界面选中的行属性"""
+        return self.ui.comboBoxActionProportion.currentData()
 
     def selectedAction(self) -> QAction:
-        pass
+        """获取listview中选中的action"""
+        m = self.ui.listViewSelect.selectionModel()
+        if not m or not m.hasSelection():
+            return None
+
+        i = m.currentIndex()
+        return self.m_d.mAcionModel.indexToAction(i)
 
     def itemToAction(self, item: QStandardItem) -> QAction:
-        pass
+        """把item转换为action"""
+        return self.m_d.itemToAction(item)
 
     def selectedItem(self) -> QStandardItem:
-        pass
+        """获取ribbon tree选中的item"""
+        m = self.ui.treeViewResult.selectionModel()
+        if not m or not m.hasSelection():
+            return None
+
+        i = m.currentIndex()
+        return self.m_d.mRibbonModel.itemFromIndex(i)
 
     def selectedRibbonLevel(self) -> int:
-        pass
+        """获取选中的ribbon tree 的level
+        :return: -1为选中异常，0代表选中了category 1代表选中了pannel 2代表选中了action
+        """
+        item = self.selectedItem()
+        if item:
+            return self.itemLevel(item)
+
+        return -1
 
     def itemLevel(self, item: QStandardItem) -> int:
-        pass
+        """获取StandardItem 的level"""
+        return self.m_d.itemLevel(item)
 
     def setSelectItem(self, item: QStandardItem, ensureVisible=False):
-        pass
+        """设置某个item被选中"""
+        m = self.ui.treeViewResult.selectionModel()
+        if not m:
+            return
+
+        m.clearSelection()
+        m.select(item.index(), QItemSelectionModel.Select)
+        if ensureVisible:
+            self.ui.treeViewResult.scrollTo(item.index())
 
     def isItemCanCustomize(self, item: QStandardItem) -> bool:
-        pass
+        """判断itemn能否改动，可以改动返回true"""
+        return self.m_d.isItemCanCustomize(item)
 
     def isSelectedItemCanCustomize(self) -> bool:
-        pass
+        return self.isItemCanCustomize(self.selectedItem())
+
+    def isCustomizeItem(self, item: QStandardItem) -> bool:
+        """判断itemn能否改动，可以改动返回true"""
+        return self.m_d.isCustomizeItem(item)
+
+    def isSelectedItemIsCustomize(self) -> bool:
+        return self.isCustomizeItem(self.selectedItem())
 
     def removeItem(self, item: QStandardItem):
-        pass
+        if item.parent():
+            item.parent().removeRow(item.row())
+        else:
+            self.m_d.mRibbonModel.removeRow(item.row())
 
     # slots
     def onComboBoxActionIndexCurrentIndexChanged(self, index: int):
         pass
+        # TODO 待完成
 
     def onRadioButtonGroupButtonClicked(self, b):
         pass
@@ -605,14 +647,13 @@ class SARibbonCustomizeWidgetPrivate:
                         if SARibbonCustomizeData.isCanCustomize(i.widget()):
                             # 标记这个是可以自定义的
                             ii.setData(True, SARibbonCustomizeWidget.CanCustomizeRole)
-
                     else:
                         # 不是自定义，说明是action
                         ii.setText(i.action.text())
                         ii.setIcon(i.action.icon())
                         if SARibbonCustomizeData.isCanCustomize(i.action):
                             # 标记这个是可以自定义的
-                            ii.setData(true, SARibbonCustomizeWidget.CanCustomizeRole)
+                            ii.setData(True, SARibbonCustomizeWidget.CanCustomizeRole)
 
                     ii.setData(2, SARibbonCustomizeWidget.LevelRole)
                     ii.setData(i, SARibbonCustomizeWidget.PointerRole)
