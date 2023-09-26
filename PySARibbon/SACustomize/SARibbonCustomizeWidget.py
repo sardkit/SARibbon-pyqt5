@@ -15,7 +15,7 @@ from PyQt5.QtCore import Qt, QXmlStreamReader, QModelIndex, QDateTime, QXmlStrea
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import QWidget, QAction, QHBoxLayout, QVBoxLayout, QLabel, QComboBox, QLineEdit, QListView, \
     QSpacerItem, QPushButton, QRadioButton, QButtonGroup, QTreeView, QToolButton, QSizePolicy, QAbstractItemView, \
-    QApplication
+    QApplication, QMessageBox, QInputDialog
 
 from PySARibbon.SAWidgets import SARibbonPannelItem
 from .SARibbonActionsManager import SARibbonActionsManager, SARibbonActionsManagerModel
@@ -74,8 +74,8 @@ class SARibbonCustomizeWidget(QWidget):
 
     def updateModel(self, tp: int = -1):
         """根据当前的radiobutton选项来更新model"""
-        if tp < 0:
-            self.m_d.mShowType = type
+        if tp >= 0:
+            self.m_d.mShowType = tp
             self.m_d.updateModel()
         else:
             tp = self.ShowAllCategory if self.self.ui.radioButtonAllCategory.isChecked() else self.ShowMainCategory
@@ -228,47 +228,287 @@ class SARibbonCustomizeWidget(QWidget):
 
     # slots
     def onComboBoxActionIndexCurrentIndexChanged(self, index: int):
-        pass
-        # TODO 待完成
+        tag: int = self.ui.comboBoxActionIndex.itemData(index)
+        self.m_d.mAcionModel.setFilter(tag)
 
     def onRadioButtonGroupButtonClicked(self, b):
-        pass
+        categoryType = self.ShowAllCategory if (b == self.ui.radioButtonAllCategory) else self.ShowMainCategory
+        self.updateModel(categoryType)
 
     def onPushButtonNewCategoryClicked(self):
-        pass
+        row: int = self.m_d.mRibbonModel.rowCount()
+        m: QItemSelectionModel = self.ui.treeViewResult.selectionModel()
+
+        if m and m.hasSelection():
+            i: QModelIndex = m.currentIndex()
+            while i.parent().isValid():
+                i = i.parent()
+            # 获取选中的最顶层item
+            row = i.row() + 1
+
+        self.m_d.mCustomizeCategoryCount += 1
+        ni: QStandardItem = QStandardItem("category[customize]{0}".format(self.m_d.mCustomizeCategoryCount))
+        ni.setData(0, SARibbonCustomizeWidget.LevelRole)
+        self.m_d.mRibbonModel.insertRow(row, ni)
+        # 设置新增的为选中
+        self.setSelectItem(ni)
+        # 把动作插入动作列表中
+        d = SARibbonCustomizeData.makeAddCategoryCustomizeData(ni.text(), ni.row(), SARibbonCustomizeWidgetPrivate.makeRandomObjName("category"))
+
+        self.m_d.mCustomizeDatas.append(d)
+        ni.setData(True, SARibbonCustomizeWidget.CanCustomizeRole)  # 有CustomizeRole，必有CanCustomizeRole
+        ni.setData(True, SARibbonCustomizeWidget.CustomizeRole)
+        ni.setData(d.categoryObjNameValue, SARibbonCustomizeWidget.CustomizeObjNameRole)
 
     def onPushButtonNewPannelClicked(self):
-        pass
+        item: QStandardItem = self.selectedItem()
+        if not item:
+            return
+
+        level: int = self.selectedRibbonLevel()
+        self.m_d.mCustomizePannelCount += 1
+        ni: QStandardItem = QStandardItem("pannel[customize]{0}".format(self.m_d.mCustomizePannelCount))
+        ni.setData(1, SARibbonCustomizeWidget.LevelRole)
+
+        if 0 == level:
+            # 说明是category,插入到最后
+            item.appendRow(ni)
+        elif 1 == level:
+            # 说明选择的是pannel，插入到此pannel之后
+            categoryItem: QStandardItem = item.parent()
+            if categoryItem is None:
+                return
+            categoryItem.insertRow(item.row() + 1, ni)
+        else:
+            # 不符合就删除退出
+            return
+
+        # 查找category的object name
+        categoryItem: QStandardItem = ni.parent()
+        categoryObjName = self.m_d.itemObjectName(categoryItem)
+        d = SARibbonCustomizeData.makeAddPannelCustomizeData(ni.text(), ni.row(),
+                                                             categoryObjName, SARibbonCustomizeWidgetPrivate.makeRandomObjName("pannel"))
+
+        self.m_d.mCustomizeDatas.append(d)
+        ni.setData(True, SARibbonCustomizeWidget.CanCustomizeRole)  # 有CustomizeRole，必有CanCustomizeRole
+        ni.setData(True, SARibbonCustomizeWidget.CustomizeRole)
+        ni.setData(d.pannelObjNameValue, SARibbonCustomizeWidget.CustomizeObjNameRole)
+        self.setSelectItem(ni)
 
     def onPushButtonRenameClicked(self):
-        pass
+        item: QStandardItem = self.selectedItem()
+        if item is None:
+            return
+
+        text, ok = QInputDialog.getText(self, "rename", "name:", QLineEdit.Normal, item.text())
+        if not ok or not text:
+            return
+
+        level: int = self.itemLevel(item)
+        if 0 == level:
+            # 改Category名
+            cateObjName: str = self.m_d.itemObjectName(item)
+            d = SARibbonCustomizeData.makeRenameCategoryCustomizeData(text, cateObjName)
+            self.m_d.mCustomizeDatas.append(d)
+        elif 1 == level:
+            cateObjName: str = self.m_d.itemObjectName(item.parent())
+            pannelObjName: str = self.m_d.itemObjectName(item)
+            d = SARibbonCustomizeData.makeRenamePannelCustomizeData(text, cateObjName,  pannelObjName)
+            self.m_d.mCustomizeDatas.append(d)
+        else:
+            # action 不允许改名
+            return
+
+        item.setText(text)
 
     def onPushButtonAddClicked(self):
-        pass
+        act: QAction = self.selectedAction()
+        item: QStandardItem = self.selectedItem()
+        if act is None or item is None:
+            return
+
+        level: int = self.itemLevel(item)
+        if 0 == level:
+            # 选中category不进行操作
+            return
+        elif 2 == level:
+            # 选中action，添加到这个action之后,把item设置为pannel
+            item = item.parent()
+
+        pannelObjName: str = self.m_d.itemObjectName(item)
+        categoryObjName: str = self.m_d.itemObjectName(item.parent())
+        key: str = self.m_d.mActionMgr.key(act)
+
+        d = SARibbonCustomizeData.makeAddActionCustomizeData(key, self.m_d.mActionMgr, self.selectedRowProportion(),
+                                                             categoryObjName, pannelObjName)
+        self.m_d.mCustomizeDatas.append(d)
+
+        actItem: QStandardItem = QStandardItem(act.icon(), act.text())
+
+        actItem.setData(2, SARibbonCustomizeWidget.LevelRole)
+        actItem.setData(True, SARibbonCustomizeWidget.CanCustomizeRole)  # 有CustomizeRole，必有CanCustomizeRole
+        actItem.setData(True, SARibbonCustomizeWidget.CustomizeRole)
+        actItem.setData(act.objectName(), SARibbonCustomizeWidget.CustomizeObjNameRole)
+        actItem.setData(act, SARibbonCustomizeWidget.PointerRole)  # 把action指针传入
+        item.appendRow(actItem)
 
     def onPushButtonDeleteClicked(self):
-        pass
+        item: QStandardItem = self.selectedItem()
+        if item is None:
+            return
+        if not self.isItemCanCustomize(item):
+            return
+
+        level: int = self.itemLevel(item)
+        if 0 == level:
+            # 删除category
+            d = SARibbonCustomizeData.makeRemoveCategoryCustomizeData(self.m_d.itemObjectName(item))
+            self.m_d.mCustomizeDatas.append(d)
+        elif 1 == level:
+            # 删除pannel
+            catObjName: str = self.m_d.itemObjectName(item.parent())
+            pannelObjName: str = self.m_d.itemObjectName(item)
+            d = SARibbonCustomizeData.makeRemovePannelCustomizeData(catObjName, pannelObjName)
+            self.m_d.mCustomizeDatas.append(d)
+        elif 2 == level:
+            # 删除Action
+            catObjName: str = self.m_d.itemObjectName(item.parent().parent())
+            pannelObjName: str = self.m_d.itemObjectName(item.parent())
+            act: QAction = self.itemToAction(item)
+            key: str = self.m_d.mActionMgr.key(act)
+            if not key or not catObjName or not pannelObjName:
+                return
+
+            d = SARibbonCustomizeData.makeRemoveActionCustomizeData(catObjName, pannelObjName,
+                                                                    key, self.m_d.mActionMgr)
+            self.m_d.mCustomizeDatas.append(d)
+
+        # 执行删除操作
+        self.removeItem(item)
+        # 删除后重新识别
+        self.ui.pushButtonAdd.setEnabled(self.selectedAction() and self.isSelectedItemIsCustomize() and self.selectedRibbonLevel() > 0)
+        self.ui.pushButtonDelete.setEnabled(self.isSelectedItemIsCustomize())
 
     def onListViewSelectClicked(self, index: QModelIndex):
-        pass
+        # 每次点击，判断是否可以进行操作，决定pushButtonAdd和pushButtonDelete的显示状态
+        # 点击了listview，判断treeview的状态
+        self.ui.pushButtonAdd.setEnabled(self.isSelectedItemCanCustomize() and self.selectedRibbonLevel() > 0)
+        self.ui.pushButtonDelete.setEnabled(self.isSelectedItemCanCustomize())
 
     def onTreeViewResultClicked(self, index: QModelIndex):
-        pass
+        # 每次点击，判断是否可以进行操作，决定pushButtonAdd和pushButtonDelete的显示状态
+        item: QStandardItem = self.selectedItem()
+        if item is None:
+            return
+
+        level: int = self.itemLevel(item)
+        self.ui.pushButtonAdd.setEnabled(self.selectedAction() and (level > 0) and self.isItemCanCustomize(item))
+        self.ui.pushButtonDelete.setEnabled(self.isItemCanCustomize(item))  # 有CustomizeRole，必有CanCustomizeRole
+        self.ui.pushButtonRename.setEnabled(
+            level != 2 or self.isItemCanCustomize(item))  # QAction 不能改名 ， 有CustomizeRole，必有CanCustomizeRole
 
     def onToolButtonUpClicked(self):
-        pass
+        item: QStandardItem = self.selectedItem()
+        if item is None or 0 == item.row():
+            return
+
+        level: int = self.itemLevel(item)
+        if 0 == level:
+            # 移动category
+            d = SARibbonCustomizeData.makeChangeCategoryOrderCustomizeData(self.m_d.itemObjectName(item), -1)
+            self.m_d.mCustomizeDatas.append(d)
+            r: int = item.row()
+            item = self.m_d.mRibbonModel.takeItem(r)
+            self.m_d.mRibbonModel.removeRow(r)
+            self.m_d.mRibbonModel.insertRow(r - 1, item)
+        elif 1 == level:
+            paritem: QStandardItem = item.parent()
+            d = SARibbonCustomizeData.makeChangePannelOrderCustomizeData(self.m_d.itemObjectName(paritem), self.m_d.itemObjectName(item), -1)
+            self.m_d.mCustomizeDatas.append(d)
+            r: int = item.row()
+            item = paritem.takeChild(r)
+            paritem.removeRow(r)
+            paritem.insertRow(r - 1, item)
+        elif 2 == level:
+            pannelItem: QStandardItem = item.parent()
+            categoryItem: QStandardItem = pannelItem.parent()
+            act: QAction = self.itemToAction(item)
+            if not act:
+                return
+
+            key: str = self.m_d.mActionMgr.key(act)
+            d = SARibbonCustomizeData.makeChangeActionOrderCustomizeData(self.m_d.itemObjectName(categoryItem),
+                                                                         self.m_d.itemObjectName(pannelItem), key, self.m_d.mActionMgr, -1)
+            self.m_d.mCustomizeDatas.append(d)
+            r: int = item.row()
+            item = pannelItem.takeChild(r)
+            pannelItem.removeRow(r)
+            pannelItem.insertRow(r - 1, item)
 
     def onToolButtonDownClicked(self):
-        pass
+        item: QStandardItem = self.selectedItem()
+        if item is None:
+            return
+
+        if item.parent():
+            count = item.parent().rowCount()
+        else:
+            count = self.m_d.mRibbonModel.rowCount()
+        if not item or count - 1 == item.row():
+            return
+
+        level: int = self.itemLevel(item)
+        if 0 == level:
+            # 移动category
+            d = SARibbonCustomizeData.makeChangeCategoryOrderCustomizeData(self.m_d.itemObjectName(item), 1)
+            self.m_d.mCustomizeDatas.append(d)
+            r: int = item.row()
+            item = self.m_d.mRibbonModel.takeItem(item.row())
+            self.m_d.mRibbonModel.removeRow(r)
+            self.m_d.mRibbonModel.insertRow(r + 1, item)
+        elif 1 == level:
+            paritem: QStandardItem = item.parent()
+            d = SARibbonCustomizeData.makeChangePannelOrderCustomizeData(self.m_d.itemObjectName(paritem), self.m_d.itemObjectName(item), 1)
+            self.m_d.mCustomizeDatas.append(d)
+            r: int = item.row()
+            item = paritem.takeChild(r)
+            paritem.removeRow(r)
+            paritem.insertRow(r + 1, item)
+        elif 2 == level:
+            pannelItem: QStandardItem = item.parent()
+            categoryItem: QStandardItem = pannelItem.parent()
+            act: QAction = self.itemToAction(item)
+            if not act:
+                return
+
+            key: str = self.m_d.mActionMgr.key(act)
+            d = SARibbonCustomizeData.makeChangeActionOrderCustomizeData(self.m_d.itemObjectName(categoryItem),
+                                                                         self.m_d.itemObjectName(pannelItem), key, self.m_d.mActionMgr, -1)
+            self.m_d.mCustomizeDatas.append(d)
+            r: int = item.row()
+            item = pannelItem.takeChild(r)
+            pannelItem.removeRow(r)
+            pannelItem.insertRow(r + 1, item)
 
     def onItemChanged(self, item: QStandardItem):
-        pass
+        if item is None:
+            return
+
+        level: int = self.itemLevel(item)
+        if 0 == level:
+            if item.isCheckable():
+                objname: str = self.m_d.itemObjectName(item)
+                d = SARibbonCustomizeData.makeVisibleCategoryCustomizeData(objname, item.checkState() == Qt.Checked)
+                self.m_d.mCustomizeDatas.append(d)
 
     def onLineEditSearchActionTextEdited(self, text: str):
-        pass
+        self.m_d.mAcionModel.search(text)
 
     def onPushButtonResetClicked(self):
-        pass
+        btn: int = QMessageBox.warning(self, "Warning", "Are you sure reset all customize setting?",
+                                       QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if btn == QMessageBox.Yes:
+            self.clear()
 
     @classmethod
     def sFromXml(cls, xml: QXmlStreamReader, ribbonWindow, mgr: QWidget):
