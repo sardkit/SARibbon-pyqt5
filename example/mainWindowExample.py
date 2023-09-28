@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import QApplication, QTextEdit, QStatusBar, QButtonGroup, Q
     QCalendarWidget, QSizePolicy, QMenu, QAction
 
 from PySARibbon.SAWidgets import SARibbonMenu, SARibbonPannelItem
+from PySARibbon.SACustomize import SARibbonActionsManager
 from PySARibbon import SARibbonMainWindow, SARibbonBar, SARibbonCategory, SARibbonPannel, \
     SARibbonGallery, SARibbonButtonGroupWidget
 
@@ -80,8 +81,7 @@ class MainWindow(SARibbonMainWindow):
         m.addAction(QIcon('resource/icon/506359.png'), '5')
         quickAccessBar.addMenu(m)
 
-        # TODO 跳过定制化具体实现
-        # self.addSomeOtherAction()
+        self.addSomeOtherAction()
 
         quickAccessBar.addSeparator()
         customize = QAction(QIcon("resource/icon/layerBarChart.png"), 'customize', self)
@@ -523,11 +523,30 @@ class MainWindow(SARibbonMainWindow):
         acttext5 = QAction('纯文本 acttext5', self)
 
         actIcon1 = QAction(QIcon("resource/icon/506353.png"), '带图标 actIcon1', self)
-        actIcon2 = QAction(QIcon("resource/icon/506353.png"), '带图标 actIcon2', self)
-        actIcon3 = QAction(QIcon("resource/icon/506353.png"), '带图标 actIcon3', self)
-        actIcon4 = QAction(QIcon("resource/icon/506353.png"), '带图标 actIcon4', self)
 
-        # TODO 自定义部分先跳过
+        # TODO 待验证
+        self.m_actionTagText = SARibbonActionsManager.UserDefineActionTag + 1
+        self.m_actionTagWithIcon = SARibbonActionsManager.UserDefineActionTag + 2
+
+        self.m_actMgr = SARibbonActionsManager(self)  # 申明过程已经自动注册所有action
+
+        # 以下注册特别的action
+        self.m_actMgr.registeAction(acttext1, SARibbonActionsManager.CommonlyUsedActionTag)
+        self.m_actMgr.registeAction(acttext3, SARibbonActionsManager.CommonlyUsedActionTag)
+        self.m_actMgr.registeAction(acttext5, SARibbonActionsManager.CommonlyUsedActionTag)
+        self.m_actMgr.registeAction(actIcon1, SARibbonActionsManager.CommonlyUsedActionTag)
+
+        self.m_actMgr.registeAction(acttext1, self.m_actionTagText)
+        self.m_actMgr.registeAction(acttext2, self.m_actionTagText)
+        self.m_actMgr.registeAction(acttext3, self.m_actionTagText)
+        self.m_actMgr.registeAction(acttext4, self.m_actionTagText)
+        self.m_actMgr.registeAction(acttext5, self.m_actionTagText)
+
+        self.m_actMgr.registeAction(actIcon1, self.m_actionTagWithIcon)
+
+        self.m_actMgr.setTagName(SARibbonActionsManager.CommonlyUsedActionTag, "in common use")  #
+        self.m_actMgr.setTagName(self.m_actionTagText, "no icon action")
+        self.m_actMgr.setTagName(self.m_actionTagWithIcon, "have icon action")
 
     # 槽函数
     def onShowContextCategory(self, on: bool):
