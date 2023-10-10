@@ -113,7 +113,7 @@ class SARibbonActionsManager(QObject):
             self.m_d.mSale += 1
 
         if k in self.m_d.mKeyToAction:
-            print("key: ", k, "have been exist,can:you set key in an unique value when use SARibbonActionsManager.registeAction")
+            print("key: ", k, "have been exist, can you set key in an unique value when use SARibbonActionsManager.registeAction")
             return False
 
         self.m_d.mKeyToAction[k] = act
@@ -133,7 +133,7 @@ class SARibbonActionsManager(QObject):
 
     def unregisteAction(self, act:QAction, enableEmit:bool = True) -> None:
         """取消action的注册"""
-        if None == act:
+        if act is None:
             return
 
         # 绑定槽
@@ -269,7 +269,7 @@ class SARibbonActionsManager(QObject):
         deletedTags: list = list()   # 记录删除的tag，用于触发actionTagChanged
         tagToActions: dict = dict()  # tag : list
 
-        for key, value in self.m_d.mTagToActions:
+        for key, value in self.m_d.mTagToActions.items():
             # 把不是act的内容转移到tagToActions和tagToActionKeys中，之后再和m_d里的替换
             tagToActions[key] = list()
             tmpi = tagToActions[key]
@@ -285,9 +285,10 @@ class SARibbonActionsManager(QObject):
                 deletedTags.append(key)
 
         # 删除mKeyToAction
-        key: str = self.m_d.mActionToKey.get(act)
-        self.m_d.mActionToKey.pop(act)
-        self.m_d.mKeyToAction.pop(key)
+        key: str = self.m_d.mActionToKey.get(act, '')
+        if key:
+            self.m_d.mActionToKey.pop(act)
+            self.m_d.mKeyToAction.pop(key)
 
         # 置换
         self.m_d.mTagToActions = tagToActions
@@ -333,8 +334,22 @@ class SARibbonActionsModelPrivete:
 
 
 class SARibbonActionsManagerModel(QAbstractListModel):
-    """SARibbonActionsManager 对应的model"""
-    def __init__(self, m:SARibbonActionsManager = None, p:QObject = None):
+    """
+    SARibbonActionsManager 对应的model
+    """
+    def __init__(self, *_args):
+        """
+        SARibbonActionsManagerModel(p:QObject = None)
+        SARibbonActionsManagerModel(m:SARibbonActionsManager, p:QObject = None)
+        """
+        m: SARibbonActionsManager = None
+        p: QObject = None
+        if len(_args) == 1:
+            p = _args[0]
+        elif len(_args) == 2:
+            m = _args[0]
+            p = _args[1]
+
         super().__init__(p)
         self.QAbstractListModel = p
         self.m_d = SARibbonActionsModelPrivete(self)

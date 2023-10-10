@@ -555,24 +555,24 @@ class MainWindow(SARibbonMainWindow):
 
         actIcon1 = QAction(QIcon("resource/icon/506353.png"), '带图标 actIcon1', self)
 
-        # TODO 待验证
         self.m_actionTagText = SARibbonActionsManager.UserDefineActionTag + 1
         self.m_actionTagWithIcon = SARibbonActionsManager.UserDefineActionTag + 2
 
         self.m_actMgr = SARibbonActionsManager(self)  # 申明过程已经自动注册所有action
 
         # 以下注册特别的action
-        self.m_actMgr.registeAction(acttext1, SARibbonActionsManager.CommonlyUsedActionTag)
-        self.m_actMgr.registeAction(acttext3, SARibbonActionsManager.CommonlyUsedActionTag)
-        self.m_actMgr.registeAction(acttext5, SARibbonActionsManager.CommonlyUsedActionTag)
-        self.m_actMgr.registeAction(actIcon1, SARibbonActionsManager.CommonlyUsedActionTag)
+        # self.m_actMgr.registeAction(acttext1, SARibbonActionsManager.CommonlyUsedActionTag)
+        # self.m_actMgr.registeAction(acttext2, SARibbonActionsManager.CommonlyUsedActionTag)
+        # self.m_actMgr.registeAction(acttext3, SARibbonActionsManager.CommonlyUsedActionTag)
+        # self.m_actMgr.registeAction(acttext4, SARibbonActionsManager.CommonlyUsedActionTag)
+        # self.m_actMgr.registeAction(acttext5, SARibbonActionsManager.CommonlyUsedActionTag)
+        # self.m_actMgr.registeAction(actIcon1, SARibbonActionsManager.CommonlyUsedActionTag)
 
         self.m_actMgr.registeAction(acttext1, self.m_actionTagText)
         self.m_actMgr.registeAction(acttext2, self.m_actionTagText)
         self.m_actMgr.registeAction(acttext3, self.m_actionTagText)
         self.m_actMgr.registeAction(acttext4, self.m_actionTagText)
         self.m_actMgr.registeAction(acttext5, self.m_actionTagText)
-
         self.m_actMgr.registeAction(actIcon1, self.m_actionTagWithIcon)
 
         self.m_actMgr.setTagName(SARibbonActionsManager.CommonlyUsedActionTag, "in common use")  #
@@ -586,18 +586,21 @@ class MainWindow(SARibbonMainWindow):
     def onStyleClicked(self, sty: int):
         self.ribbonBar().setRibbonStyle(sty)
 
-    def onActionCustomizeTriggered(self, b:bool) -> None:
+    def onActionCustomizeTriggered(self, b: bool) -> None:
         # TODO 待验证
         if not self.m_customizeWidget:
+            print('Test onActionCustomizeTriggered -----0')
             self.m_customizeWidget = SARibbonCustomizeWidget(self, self, Qt.WindowMinMaxButtonsHint | Qt.WindowCloseButtonHint | Qt.Dialog)
+            print('Test onActionCustomizeTriggered -----1')
             self.m_customizeWidget.setWindowModality(Qt.ApplicationModal)  # 设置阻塞类型
             self.m_customizeWidget.setAttribute(Qt.WA_ShowModal, True)  # 属性设置 True:模态 False:非模态
             self.m_customizeWidget.setupActionsManager(self.m_actMgr)
+            print('Test onActionCustomizeTriggered -----2')
 
         self.m_customizeWidget.show()
         self.m_customizeWidget.applys()
 
-    def onActionCustomizeAndSaveTriggered(self, b:bool) -> None:
+    def onActionCustomizeAndSaveTriggered(self, b: bool) -> None:
         # TODO 待验证
         dlg = SARibbonCustomizeDialog(self)
         dlg.setupActionsManager(self.m_actMgr)

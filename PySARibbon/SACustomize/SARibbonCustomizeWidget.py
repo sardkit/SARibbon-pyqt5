@@ -33,6 +33,7 @@ class SARibbonCustomizeWidget(QWidget):
         self.ui.setupUi(self)
         self.ui.listViewSelect.setModel(self.m_d.mAcionModel)
         self.ui.treeViewResult.setModel(self.m_d.mRibbonModel)
+
         self.initConnection()
         self.updateModel()
 
@@ -78,7 +79,7 @@ class SARibbonCustomizeWidget(QWidget):
             self.m_d.mShowType = tp
             self.m_d.updateModel()
         else:
-            tp = self.ShowAllCategory if self.self.ui.radioButtonAllCategory.isChecked() else self.ShowMainCategory
+            tp = self.ShowAllCategory if self.ui.radioButtonAllCategory.isChecked() else self.ShowMainCategory
             self.updateModel(tp)
             if self.m_d.mRibbonWindow:
                 bar = self.m_d.mRibbonWindow.ribbonBar()
@@ -753,8 +754,8 @@ class SARibbonCustomizeWidgetUi:
 
         self.treeViewResult = QTreeView(customizeWidget)
         self.treeViewResult.setObjectName('treeViewResult')
-        self.treeViewResult.setHeader(True)
-        self.treeViewResult.setSelectionModel(QAbstractItemView.SingleSelection)
+        self.treeViewResult.setHeaderHidden(True)
+        self.treeViewResult.setSelectionMode(QAbstractItemView.SingleSelection)
         self.treeViewResult.setAnimated(True)   # 支持动画
         self.treeViewResult.setEditTriggers(QAbstractItemView.NoEditTriggers)  # 不允许直接在item上重命名
         self.verticalLayoutResult.addWidget(self.treeViewResult)
@@ -824,26 +825,21 @@ class SARibbonCustomizeWidgetPrivate:
         self.mRibbonWindow: QWidget = None  # 保存SARibbonMainWindow的指针
         self.mActionMgr = None  # action管理器
         self.mAcionModel = SARibbonActionsManagerModel(w)  # action管理器对应的model
-        self.mRibbonModel: QStandardItemModel = QStandardItemModel(w)  # 用于很成ribbon的树
+        self.mRibbonModel = QStandardItemModel(w)  # 用于很成ribbon的树
         self.mCustomizeCategoryCount = 0  # 记录自定义Category的个数
         self.mCustomizePannelCount = 0  # 记录自定义Pannel的个数
         self.mCustomizeDatas: List = list()  # 记录所有的自定义动作
         self.mOldCustomizeDatas: List = list()  # 记录旧的自定义动作
 
     def updateModel(self):
-        mRibbonWindow = self.mRibbonWindow
-        mRibbonModel = self.mRibbonModel
-        mShowType = self.mShowType
-        SARibbonCustomizeData = self.SARibbonCustomizeData
-
-        if not mRibbonWindow:
+        if not self.mRibbonWindow:
             return
 
-        mRibbonModel.clear()
-        ribbonbar = mRibbonWindow.ribbonBar()
+        self.mRibbonModel.clear()
+        ribbonbar = self.mRibbonWindow.ribbonBar()
 
         for c in ribbonbar.categoryPages():
-            if (mShowType == SARibbonCustomizeWidget.ShowMainCategory) and c.isContextCategory():
+            if (self.mShowType == SARibbonCustomizeWidget.ShowMainCategory) and c.isContextCategory():
                 # 如果是只显示主内容，如果是上下文标签就忽略
                 continue
 
@@ -873,7 +869,8 @@ class SARibbonCustomizeWidgetPrivate:
 
                 ci.appendRow(pi)
                 for i in p.ribbonPannelItem():
-                    if i.action.isSeparator():
+                    act = i.action
+                    if act.isSeparator():
                         continue
 
                     ii = QStandardItem()
@@ -899,7 +896,7 @@ class SARibbonCustomizeWidgetPrivate:
                     ii.setData(i, SARibbonCustomizeWidget.PointerRole)
                     pi.appendRow(ii)
 
-            mRibbonModel.appendRow(ci)
+            self.mRibbonModel.appendRow(ci)
 
     def itemLevel(self, item: QStandardItem) -> int:
         return item.data(SARibbonCustomizeWidget.LevelRole)

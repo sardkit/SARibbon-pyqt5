@@ -31,9 +31,8 @@ from .SARibbonPannelLayout import SARibbonPannelLayout
 class SARibbonPannel(QWidget):
     def __init__(self, *_args):
         """
-        __init__(parent=None)
-        __init__(str, parent=None)
-        :param _args:
+        SARibbonPannel(parent=None)
+        SARibbonPannel(str, parent=None)
         """
         parent = None
         name = ''
@@ -49,6 +48,7 @@ class SARibbonPannel(QWidget):
         self.m_lastRp = SARibbonPannelItem.RPNone
         self.m_optionActionButton: SARibbonPannelOptionButton = None
         self.m_layout: SARibbonPannelLayout = None
+        self.m_isCanCustomize = True
 
         self.createLayout()
         self.setPannelLayoutMode(SARibbonPannel.ThreeRowMode)
@@ -247,6 +247,14 @@ class SARibbonPannel(QWidget):
         """移动action"""
         self.m_layout.move(fr, to)
         self.updateGeometry()
+
+    def isCanCustomize(self) -> bool:
+        """判断是否可以自定义"""
+        return self.m_isCanCustomize
+
+    def setCanCustomize(self, b: bool):
+        """设置是否可以自定义"""
+        self.m_isCanCustomize = b
 
     def pannelName(self) -> str:
         """pannel的标题"""
