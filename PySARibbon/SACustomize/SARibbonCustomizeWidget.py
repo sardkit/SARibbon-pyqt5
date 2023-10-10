@@ -801,20 +801,20 @@ class SARibbonCustomizeWidgetUi:
 
     def retranslateUi(self, customizeWidget: QWidget):
         customizeWidget.setWindowTitle(QApplication.translate('SARibbonCustomizeWidget', 'Customize Widget'))
-        self.labelSelectAction.setText(QApplication.translate('SARibbonCustomizeWidget', '\344\273\216\344\270\213\345\210\227\351\200\211\351\241\271\345\215\241\351\200\211\346\213\251\345\221\275\344\273\244\357\274\232'))
+        self.labelSelectAction.setText(QApplication.translate('SARibbonCustomizeWidget', 'Selecting commands from tabs:'))
         self.lineEditSearchAction.setInputMask('')
         self.lineEditSearchAction.setText('')
-        self.lineEditSearchAction.setPlaceholderText(QApplication.translate('SARibbonCustomizeWidget', '\346\237\245\346\211\276\345\221\275\344\273\244'))
-        self.pushButtonAdd.setText(QApplication.translate('SARibbonCustomizeWidget', '\346\267\273\345\212\240 >>'))
-        self.pushButtonDelete.setText(QApplication.translate('SARibbonCustomizeWidget', '<< \345\210\240\351\231\244'))
-        self.labelCustomize.setText(QApplication.translate('SARibbonCustomizeWidget', '\350\207\252\345\256\232\344\271\211\345\212\237\350\203\275\345\214\272\357\274\232'))
-        self.radioButtonMainCategory.setText(QApplication.translate('SARibbonCustomizeWidget', '\344\270\273\351\200\211\351\241\271\345\215\241'))
-        self.radioButtonAllCategory.setText(QApplication.translate('SARibbonCustomizeWidget', '\346\211\200\346\234\211\351\200\211\351\241\271\345\215\241'))
-        self.pushButtonNewCategory.setText(QApplication.translate('SARibbonCustomizeWidget', '\346\226\260\345\273\272\351\200\211\351\241\271\345\215\241'))
-        self.pushButtonNewPannel.setText(QApplication.translate('SARibbonCustomizeWidget', '\346\226\260\345\273\272\347\273\204'))
-        self.pushButtonRename.setText(QApplication.translate('SARibbonCustomizeWidget', '\351\207\215\345\221\275\345\220\215'))
-        self.pushButtonReset.setText(QApplication.translate('SARibbonCustomizeWidget', 'reset'))
-        self.labelProportion.setText(QApplication.translate('SARibbonCustomizeWidget', 'proportion:'))
+        self.lineEditSearchAction.setPlaceholderText(QApplication.translate('SARibbonCustomizeWidget', 'Search Command'))
+        self.pushButtonAdd.setText(QApplication.translate('SARibbonCustomizeWidget', 'Add >>'))
+        self.pushButtonDelete.setText(QApplication.translate('SARibbonCustomizeWidget', '<< Sub'))
+        self.labelCustomize.setText(QApplication.translate('SARibbonCustomizeWidget', 'Customization Area:'))
+        self.radioButtonMainCategory.setText(QApplication.translate('SARibbonCustomizeWidget', 'Main Category'))
+        self.radioButtonAllCategory.setText(QApplication.translate('SARibbonCustomizeWidget', 'All Category'))
+        self.pushButtonNewCategory.setText(QApplication.translate('SARibbonCustomizeWidget', 'New Category'))
+        self.pushButtonNewPannel.setText(QApplication.translate('SARibbonCustomizeWidget', 'New Pannel'))
+        self.pushButtonRename.setText(QApplication.translate('SARibbonCustomizeWidget', 'Rename'))
+        self.pushButtonReset.setText(QApplication.translate('SARibbonCustomizeWidget', 'Reset'))
+        self.labelProportion.setText(QApplication.translate('SARibbonCustomizeWidget', 'Proportion:'))
 
 
 class SARibbonCustomizeWidgetPrivate:
@@ -870,7 +870,7 @@ class SARibbonCustomizeWidgetPrivate:
                 ci.appendRow(pi)
                 for i in p.ribbonPannelItem():
                     act = i.action
-                    if act.isSeparator():
+                    if not act or act.isSeparator():
                         continue
 
                     ii = QStandardItem()

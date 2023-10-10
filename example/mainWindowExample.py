@@ -8,7 +8,7 @@ import sys
 from PyQt5.QtCore import Qt, QFile, QIODevice, QXmlStreamWriter, QTextStream
 from PyQt5.QtGui import QIcon, QKeySequence, QColor
 from PyQt5.QtWidgets import QApplication, QTextEdit, QStatusBar, QButtonGroup, QRadioButton, QToolButton, \
-    QCalendarWidget, QSizePolicy, QMenu, QAction, QComboBox, QLineEdit, QCheckBox
+    QCalendarWidget, QSizePolicy, QMenu, QAction, QComboBox, QLineEdit, QCheckBox, QWidget
 
 from PySARibbon.SAWidgets import SARibbonMenu, SARibbonPannelItem
 from PySARibbon.SACustomize import SARibbonActionsManager, SARibbonCustomizeWidget, SARibbonCustomizeDialog
@@ -589,13 +589,10 @@ class MainWindow(SARibbonMainWindow):
     def onActionCustomizeTriggered(self, b: bool) -> None:
         # TODO 待验证
         if not self.m_customizeWidget:
-            print('Test onActionCustomizeTriggered -----0')
             self.m_customizeWidget = SARibbonCustomizeWidget(self, self, Qt.WindowMinMaxButtonsHint | Qt.WindowCloseButtonHint | Qt.Dialog)
-            print('Test onActionCustomizeTriggered -----1')
             self.m_customizeWidget.setWindowModality(Qt.ApplicationModal)  # 设置阻塞类型
-            self.m_customizeWidget.setAttribute(Qt.WA_ShowModal, True)  # 属性设置 True:模态 False:非模态
+            # self.m_customizeWidget.setWindowModality(Qt.WindowModal)    # 属性设置 Qt.WindowModal:模态 Qt.NonModal:非模态
             self.m_customizeWidget.setupActionsManager(self.m_actMgr)
-            print('Test onActionCustomizeTriggered -----2')
 
         self.m_customizeWidget.show()
         self.m_customizeWidget.applys()

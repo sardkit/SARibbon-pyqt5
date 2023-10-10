@@ -146,7 +146,7 @@ class SARibbonActionsManager(QObject):
 
     def actions(self, tag:int) -> list:
         """通过tag筛选出系列action"""
-        return self.m_d.mTagToActions[tag]
+        return self.m_d.mTagToActions.get(tag, list())
 
     def actionTags(self) -> list:
         """获取所有的标签"""
