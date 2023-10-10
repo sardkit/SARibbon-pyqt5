@@ -74,7 +74,7 @@ class SARibbonCustomizeDialog(QDialog):
 
     def initConnection(self):
         self.ui.pushButtonOk.clicked.connect(self.accept)
-        self.ui.pushButtonOk.clicked.connect(self.reject)
+        self.ui.pushButtonCancel.clicked.connect(self.reject)
 
 
 class SARibbonCustomizeDialogUi:
@@ -109,6 +109,7 @@ class SARibbonCustomizeDialogUi:
         self.pushButtonOk.setObjectName('pushButtonOk')
         self.horizontalLayoutButtonGroup.addWidget(self.pushButtonOk)
 
+        self.verticalLayoutMain.addItem(self.horizontalLayoutButtonGroup)
         self.retranslateUi(customizeDialog)
 
     def retranslateUi(self, customizeDialog: QWidget):

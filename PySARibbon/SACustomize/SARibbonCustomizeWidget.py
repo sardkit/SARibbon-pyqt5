@@ -532,7 +532,8 @@ class SARibbonCustomizeWidget(QWidget):
         :param cds: 基于List<SARibbonCustomizeData>生成的步骤
         :return: 如果出现异常，返回False,如果没有自定义数据也会返回False
         """
-        if len(cds) <= 0:
+        if len(cds) == 0:
+            print('warning, sa_customize_datas_to_xml cds is empty!')
             return False
 
         xml.writeStartElement('sa-ribbon-customize')
@@ -624,6 +625,7 @@ class SARibbonCustomizeWidget(QWidget):
         """
         f = QFile(filePath)
         if not f.open(QIODevice.ReadOnly | QIODevice.Text):
+            print('warning, sa_apply_customize_from_xml_file, {} open failed!'.format(filePath))
             return False
 
         f.seek(0)

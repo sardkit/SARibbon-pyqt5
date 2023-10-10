@@ -88,7 +88,7 @@ class MainWindow(SARibbonMainWindow):
         customize = QAction(QIcon("resource/icon/layerBarChart.png"), 'customize', self)
         customize.triggered.connect(self.onActionCustomizeTriggered)
         quickAccessBar.addAction(customize)
-        customize2 = QAction(QIcon("resource/icon/openProject.png"), 'customize', self)
+        customize2 = QAction(QIcon("resource/icon/openProject.png"), 'customize2', self)
         customize2.triggered.connect(self.onActionCustomizeAndSaveTriggered)
         quickAccessBar.addAction(customize2)
 
@@ -388,7 +388,6 @@ class MainWindow(SARibbonMainWindow):
         useqss.triggered.connect(tmp_func2)
         pannel.addLargeAction(useqss)
 
-        # 定制化 TODO 待验证
         def tmp_func3(on: bool):
             if not self.loadCustomizeXmlHascall:
                 self.loadCustomizeXmlHascall = SARibbonCustomizeWidget.sa_apply_customize_from_xml_file("customize.xml", self, self.m_actMgr)
@@ -561,13 +560,6 @@ class MainWindow(SARibbonMainWindow):
         self.m_actMgr = SARibbonActionsManager(self)  # 申明过程已经自动注册所有action
 
         # 以下注册特别的action
-        # self.m_actMgr.registeAction(acttext1, SARibbonActionsManager.CommonlyUsedActionTag)
-        # self.m_actMgr.registeAction(acttext2, SARibbonActionsManager.CommonlyUsedActionTag)
-        # self.m_actMgr.registeAction(acttext3, SARibbonActionsManager.CommonlyUsedActionTag)
-        # self.m_actMgr.registeAction(acttext4, SARibbonActionsManager.CommonlyUsedActionTag)
-        # self.m_actMgr.registeAction(acttext5, SARibbonActionsManager.CommonlyUsedActionTag)
-        # self.m_actMgr.registeAction(actIcon1, SARibbonActionsManager.CommonlyUsedActionTag)
-
         self.m_actMgr.registeAction(acttext1, self.m_actionTagText)
         self.m_actMgr.registeAction(acttext2, self.m_actionTagText)
         self.m_actMgr.registeAction(acttext3, self.m_actionTagText)
@@ -587,7 +579,6 @@ class MainWindow(SARibbonMainWindow):
         self.ribbonBar().setRibbonStyle(sty)
 
     def onActionCustomizeTriggered(self, b: bool) -> None:
-        # TODO 待验证
         if not self.m_customizeWidget:
             self.m_customizeWidget = SARibbonCustomizeWidget(self, self, Qt.WindowMinMaxButtonsHint | Qt.WindowCloseButtonHint | Qt.Dialog)
             self.m_customizeWidget.setWindowModality(Qt.ApplicationModal)  # 设置阻塞类型
@@ -598,7 +589,6 @@ class MainWindow(SARibbonMainWindow):
         self.m_customizeWidget.applys()
 
     def onActionCustomizeAndSaveTriggered(self, b: bool) -> None:
-        # TODO 待验证
         dlg = SARibbonCustomizeDialog(self)
         dlg.setupActionsManager(self.m_actMgr)
         dlg.fromXml("customize.xml")
