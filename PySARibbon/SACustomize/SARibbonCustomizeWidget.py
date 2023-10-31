@@ -966,6 +966,7 @@ class SARibbonCustomizeWidgetPrivate:
     def isItemCanCustomize(self, item: QStandardItem) -> bool:
         """判断是否可以自定义"""
         if not item:
+            print('warning: isItemCanCustomize, not item')
             return False
 
         v = item.data(SARibbonCustomizeWidget.CanCustomizeRole)

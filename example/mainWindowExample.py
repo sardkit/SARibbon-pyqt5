@@ -85,10 +85,10 @@ class MainWindow(SARibbonMainWindow):
         self.addSomeOtherAction()
 
         quickAccessBar.addSeparator()
-        customize = QAction(QIcon("resource/icon/layerBarChart.png"), 'customize', self)
+        customize = QAction(QIcon("resource/icon/layerBarChart.png"), 'customizeWidget', self)
         customize.triggered.connect(self.onActionCustomizeTriggered)
         quickAccessBar.addAction(customize)
-        customize2 = QAction(QIcon("resource/icon/openProject.png"), 'customize2', self)
+        customize2 = QAction(QIcon("resource/icon/openProject.png"), 'customizeDialog', self)
         customize2.triggered.connect(self.onActionCustomizeAndSaveTriggered)
         quickAccessBar.addAction(customize2)
 
