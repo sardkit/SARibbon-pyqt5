@@ -5,12 +5,13 @@
 """
 import sys
 
-from PyQt5.QtCore import Qt, QFile, QIODevice
+from PyQt5.QtCore import Qt, QFile, QIODevice, QXmlStreamWriter, QTextStream
 from PyQt5.QtGui import QIcon, QKeySequence, QColor
 from PyQt5.QtWidgets import QApplication, QTextEdit, QStatusBar, QButtonGroup, QRadioButton, QToolButton, \
-    QCalendarWidget, QSizePolicy, QMenu, QAction
+    QCalendarWidget, QSizePolicy, QMenu, QAction, QComboBox, QLineEdit, QCheckBox, QWidget
 
 from PySARibbon.SAWidgets import SARibbonMenu, SARibbonPannelItem
+from PySARibbon.SACustomize import SARibbonActionsManager, SARibbonCustomizeWidget, SARibbonCustomizeDialog
 from PySARibbon import SARibbonMainWindow, SARibbonBar, SARibbonCategory, SARibbonPannel, \
     SARibbonGallery, SARibbonButtonGroupWidget
 
@@ -25,6 +26,7 @@ class MainWindow(SARibbonMainWindow):
         self.m_actMgr = None
         self.m_actionTagText = 0
         self.m_actionTagWithIcon = 0
+        self.loadCustomizeXmlHascall = False
 
         self.initWidgets()
 
@@ -80,15 +82,14 @@ class MainWindow(SARibbonMainWindow):
         m.addAction(QIcon('resource/icon/506359.png'), '5')
         quickAccessBar.addMenu(m)
 
-        # TODO 跳过定制化具体实现
-        # self.addSomeOtherAction()
+        self.addSomeOtherAction()
 
         quickAccessBar.addSeparator()
-        customize = QAction(QIcon("resource/icon/layerBarChart.png"), 'customize', self)
-        customize.triggered.connect(lambda on: self.m_edit.append('customize triggered'))       # TODO
+        customize = QAction(QIcon("resource/icon/layerBarChart.png"), 'customizeWidget', self)
+        customize.triggered.connect(self.onActionCustomizeTriggered)
         quickAccessBar.addAction(customize)
-        customize2 = QAction(QIcon("resource/icon/openProject.png"), 'customize', self)
-        customize2.triggered.connect(lambda on: self.m_edit.append('customize2 triggered'))     # TODO
+        customize2 = QAction(QIcon("resource/icon/openProject.png"), 'customizeDialog', self)
+        customize2.triggered.connect(self.onActionCustomizeAndSaveTriggered)
         quickAccessBar.addAction(customize2)
 
         rightBar = ribbon.activeTabBarRightButtonGroup()
@@ -268,7 +269,31 @@ class MainWindow(SARibbonMainWindow):
         btn.setPopupMode(QToolButton.InstantPopup)
         btn.setEnabled(False)
 
-        # 跳过SARibbonComboBox，SARibbonLineEdit， SARibbonCheckBox TODO
+        # QComboBox, QLineEdit, QCheckBox
+        com = QComboBox(self)
+        com.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        com.setWindowTitle("ComboBox Editable")
+        for i in range(20):
+            com.addItem("item: {0}".format(i + 1))
+        com.setEditable(True)
+        pannel2.addSmallWidget(com)
+
+        com2 = QComboBox(self)
+        com2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        com2.setWindowTitle("ComboBox")
+        for i in range(20):
+            com2.addItem("item: {0}".format(i + 1))
+        pannel2.addSmallWidget(com2)
+
+        lineEdit = QLineEdit(self)
+        lineEdit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        lineEdit.setWindowTitle("Line Edit")
+        lineEdit.setText("Test LineEdit")
+        pannel2.addSmallWidget(lineEdit)
+
+        checkBox = QCheckBox(self)
+        checkBox.setText("checkBox")
+        pannel2.addSmallWidget(checkBox)
 
         pannel2.addSeparator()
         calendarWidget = QCalendarWidget(self)
@@ -363,14 +388,19 @@ class MainWindow(SARibbonMainWindow):
         useqss.triggered.connect(tmp_func2)
         pannel.addLargeAction(useqss)
 
-        # 定制化跳过 TODO
+        def tmp_func3(on: bool):
+            if not self.loadCustomizeXmlHascall:
+                self.loadCustomizeXmlHascall = SARibbonCustomizeWidget.sa_apply_customize_from_xml_file("customize.xml", self, self.m_actMgr)
+        loadCustomizeXmlFile = QAction(QIcon("resource/icon/506405.png"), "load customize from xml file", self)
+        loadCustomizeXmlFile.triggered.connect(tmp_func3)
+        pannel.addLargeAction(loadCustomizeXmlFile)
 
         normalButton = QAction(QIcon("resource/icon/506354.png"), '正常模式', self)
         normalButton.setObjectName('normalButton')
         pannel.addLargeAction(normalButton)
         normalButton.triggered.connect(lambda on: self.updateWindowFlag(self.windowFlags() | Qt.WindowMinMaxButtonsHint
                                                                         | Qt.WindowCloseButtonHint))
-        noneButton = QAction(QIcon("resource/icon/506462.png"), '无按钮模式', self)
+        noneButton = QAction(QIcon("resource/icon/506359.png"), '无按钮模式', self)
         noneButton.setObjectName('noneButton')
         pannel.addLargeAction(noneButton)
         noneButton.triggered.connect(lambda on: self.updateWindowFlag(self.windowFlags() & ~Qt.WindowMinMaxButtonsHint
@@ -523,11 +553,23 @@ class MainWindow(SARibbonMainWindow):
         acttext5 = QAction('纯文本 acttext5', self)
 
         actIcon1 = QAction(QIcon("resource/icon/506353.png"), '带图标 actIcon1', self)
-        actIcon2 = QAction(QIcon("resource/icon/506353.png"), '带图标 actIcon2', self)
-        actIcon3 = QAction(QIcon("resource/icon/506353.png"), '带图标 actIcon3', self)
-        actIcon4 = QAction(QIcon("resource/icon/506353.png"), '带图标 actIcon4', self)
 
-        # TODO 自定义部分先跳过
+        self.m_actionTagText = SARibbonActionsManager.UserDefineActionTag + 1
+        self.m_actionTagWithIcon = SARibbonActionsManager.UserDefineActionTag + 2
+
+        self.m_actMgr = SARibbonActionsManager(self)  # 申明过程已经自动注册所有action
+
+        # 以下注册特别的action
+        self.m_actMgr.registeAction(acttext1, self.m_actionTagText)
+        self.m_actMgr.registeAction(acttext2, self.m_actionTagText)
+        self.m_actMgr.registeAction(acttext3, self.m_actionTagText)
+        self.m_actMgr.registeAction(acttext4, self.m_actionTagText)
+        self.m_actMgr.registeAction(acttext5, self.m_actionTagText)
+        self.m_actMgr.registeAction(actIcon1, self.m_actionTagWithIcon)
+
+        self.m_actMgr.setTagName(SARibbonActionsManager.CommonlyUsedActionTag, "in common use")  #
+        self.m_actMgr.setTagName(self.m_actionTagText, "no icon action")
+        self.m_actMgr.setTagName(self.m_actionTagWithIcon, "have icon action")
 
     # 槽函数
     def onShowContextCategory(self, on: bool):
@@ -535,6 +577,42 @@ class MainWindow(SARibbonMainWindow):
 
     def onStyleClicked(self, sty: int):
         self.ribbonBar().setRibbonStyle(sty)
+
+    def onActionCustomizeTriggered(self, b: bool) -> None:
+        if not self.m_customizeWidget:
+            self.m_customizeWidget = SARibbonCustomizeWidget(self, self, Qt.WindowMinMaxButtonsHint | Qt.WindowCloseButtonHint | Qt.Dialog)
+            self.m_customizeWidget.setWindowModality(Qt.ApplicationModal)  # 设置阻塞类型
+            # self.m_customizeWidget.setWindowModality(Qt.WindowModal)    # 属性设置 Qt.WindowModal:模态 Qt.NonModal:非模态
+            self.m_customizeWidget.setupActionsManager(self.m_actMgr)
+
+        self.m_customizeWidget.show()
+        self.m_customizeWidget.applys()
+
+    def onActionCustomizeAndSaveTriggered(self, b: bool) -> None:
+        dlg = SARibbonCustomizeDialog(self)
+        dlg.setupActionsManager(self.m_actMgr)
+        dlg.fromXml("customize.xml")
+        if SARibbonCustomizeDialog.Accepted == dlg.exec():
+            dlg.applys()
+            string: bytes = bytes()
+            xml = QXmlStreamWriter(string)
+            xml.setAutoFormatting(True)
+            xml.setAutoFormattingIndent(2)
+            xml.setCodec("utf-8")
+
+            xml.writeStartDocument()
+            isok: bool = dlg.toXml(xml)
+            xml.writeEndDocument()
+            if isok:
+                f = QFile("customize.xml")
+                if f.open(QIODevice.ReadWrite | QIODevice.Text | QIODevice.Truncate):
+                    s = QTextStream(f)
+                    s.setCodec("utf-8")
+                    s << string
+                    s.flush()
+
+                self.m_edit.append("write xml:")
+                self.m_edit.append(string.decode('utf-8'))
 
     def onMenuButtonPopupCheckableTest(self, on: bool):
         self.m_edit.append('MenuButtonPopupCheckableTest : %s' % on)
