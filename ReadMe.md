@@ -26,15 +26,21 @@ MIT协议，欢迎大家使用并提出意见
 
 # 使用方法
 
-可以把PySARibbon目录包移动到需要的工程目录下，然后在项目的文件中`import PySARibbonBar`或`from PySARibbonBar import *`即可，
+1. 进入src目录，打开终端，安装此包，命令如下:
+
+```shell
+python setup.py install
+```
+
+2然后在项目的文件中`import PySARibbon`或`from PySARibbon import *`即可，
 或者引用具体实用类示例如下：
 
 ```Python
-from PySARibbonBar import SARibbonMainWindow
+from PySARibbon import SARibbonMainWindow
 ```
 
 
-# 更多截图(copy自原Qt项目，定制化功能暂未实现)
+# 更多截图(copy自原Qt项目)
 
 ![](https://cdn.jsdelivr.net/gh/czyt1988/SARibbon/doc/screenshot/SARibbonBar-screenshot-01.gif)
 
@@ -61,7 +67,7 @@ from PySARibbonBar import SARibbonMainWindow
 
 ## 计划
 
-- 实现C++ Qt版本定制化功能
+- 实现C++版最新功能
 
 ## 已知bug
 
