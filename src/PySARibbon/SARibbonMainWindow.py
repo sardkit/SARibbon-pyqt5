@@ -46,11 +46,11 @@ class SARibbonMainWindow(QMainWindow):
 
     def setRibbonTheme(self, theme):
         if theme == SARibbonMainWindow.NormalTheme:
-            self.loadTheme('resource/default.qss')
+            self.loadTheme(':/theme/resource/default.qss')
         elif theme == SARibbonMainWindow.Office2013:
-            self.loadTheme('resource/office2013.qss')
+            self.loadTheme(':/theme/resource/office2013.qss')
         else:
-            self.loadTheme('resource/default.qss')
+            self.loadTheme(':/theme/resource/default.qss')
 
     def ribbonTheme(self) -> int:
         return self.m_currentRibbonTheme
